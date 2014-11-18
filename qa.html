@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no,email=no">
+
+    <!-- <link rel="stylesheet" href="appframework/css/forms.css"> -->
+    <style type="text/css">
+        #animate {
+            width: 100px;
+            height: 100px;
+            background-color: #c00;
+        }
+    </style>
+</head>
+<body>
+
+    <!--
+    ## AppFramework UI
+    <div id="afui">
+        <div class="input-group">
+            <label>Gender</label>
+            <input type="radio" id="male" name="" value="1" />
+            <label for="male">Male</label>
+        </div>
+    </div>
+    -->
+
+    <div id="animate"></div>
+
+    <div id="questions" class="qa-list">
+        <div class="qa-group">
+            <div class="qtitle">
+                <h2>问题大类问题大类 <small>（不定项选择，共5题，每题2分，共10分）</small></h2>                    
+            </div>
+            <ol class="qas">
+                <li class="qa wrong" data-id="51">                        
+                    <h3>问题问题问题问题问题问题问题问题？ <span class="correct">（正确答案：ABC）</span></h3>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" value="A" /> A. 选项一</label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" value="B" /> B. 选项二</label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" value="C" /> C. 选项三</label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" value="D" /> D. 选项四</label>
+                        </li>
+                    </ul>
+                    <span class="status"><i class="icon"></i></span>
+                </li>
+
+                <li class="qa wrong" data-id="51">                        
+                    <h3>问题问题问题问题问题问题问题问题？ <span class="correct">（正确答案：ABC）</span></h3>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" value="A" /> A. 选项一</label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" value="B" /> B. 选项二</label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" value="C" /> C. 选项三</label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" value="D" /> D. 选项四</label>
+                        </li>
+                    </ul>
+                    <span class="status"><i class="icon"></i></span>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+
+    <div>
+        <p><a href="taobao://m.taobao.com" id="taobao">连接到淘宝</a></p>
+        <p><a href="taobaotravel://h5_homepage" id="trip">连接到旅行</a></p>
+    </div>
+
+    <script src="appframework/appframework.min.js"></script>
+    <script type="text/javascript" src="appframework/plugins/af.css3animate.js"></script>
+    <script>
+        var tmp = new $.css3AnimateQueue(); //Create a new queue
+
+        tmp.push({
+            id: "animate",
+            x: 20,
+            y: 30,
+            time: "300ms"
+        });
+        tmp.push({
+            id: "animate",
+            x: 20,
+            y: 30,
+            time: "500ms",
+            previous: true
+        });
+        tmp.push({
+            id: "animate",
+            x: 100,
+            y: 100,
+            time: "1s"
+        });
+        tmp.push(function () {
+            alert('end');
+        });
+        tmp.run();
+    </script>
+</body>
+</html>

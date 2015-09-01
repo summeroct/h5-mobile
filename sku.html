@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .field {margin-bottom: 10px;}
+    </style>
+    <script src="zepto.js"></script>
+</head>
+<body>
+    <div id="color" class="color">
+        <label>颜色：</label>
+        <div class="field"></div>
+    </div>
+
+    <div id="version" class="version">
+        <label>版本：</label>
+        <div class="field"></div>
+    </div>
+
+    <div id="size" class="size">
+        <label>容量：</label>
+        <div class="field"></div>
+    </div>
+
+
+    <script>
+        var skudata = {
+            defSku: [],
+            skulist: {
+            }
+        };
+
+        //
+        var color = {},
+            version = {},
+            size = {};
+
+        var skulist = {
+                '1:1:3': {
+                    skuid: 123123,
+                    name: '纯白,联通版,64G',
+                    price: 799.00,
+                    stock: 99,
+                    insurance: '意外保59元'
+                },
+                '1:1:2': {
+                    skuid: 123123,
+                    name: '纯白,联通版,32G',
+                    price: 599.00,
+                    stock: 99,
+                    insurance: '意外保59元'
+                },
+                '1:2:2': {
+                    skuid: 123123,
+                    name: '纯白,移动版,32G',
+                    price: 599.00,
+                    stock: 99,
+                    insurance: '意外保59元'
+                },
+                '2:2:2': {
+                    skuid: 123123,
+                    name: '灰色,移动版,32G',
+                    price: 599.00,
+                    stock: 99,
+                    insurance: '意外保59元'
+                },
+                '3:3:1': {
+                    skuid: 123123,
+                    name: '粉色,移动公开版,16G',
+                    price: 599.00,
+                    stock: 99,
+                    insurance: '意外保59元'
+                }
+            };
+
+        $.each(skulist, function (k, v) {
+            var propVal = k.split(':');
+
+            var colorVal = propVal[0];
+            var versionVal = propVal[1];
+            var sizeVal = propVal[2];
+
+            if (!color[colorVal]) {
+                color[colorVal] = v.name.split(',')[0];
+            }
+
+            if (!version[versionVal]) {
+                version[versionVal] = v.name.split(',')[1];
+            }
+
+            if (!size[sizeVal]) {
+                size[sizeVal] = v.name.split(',')[2];
+            }
+        });
+        console.log(color, version, size)
+
+        var colorTmpl = '';
+        $.each(color, function (k, v) {
+            colorTmpl += '<button data-value="'+ k +'">'+ v +'</button>';
+        });
+
+        var versionTmpl = '';
+        $.each(version, function (k, v) {
+            versionTmpl += '<button data-value="'+ k +'" disabled>'+ v +'</button>';
+        });
+
+        var sizeTmpl = '';
+        $.each(size, function (k, v) {
+            sizeTmpl += '<button data-value="'+ k +'" disabled>'+ v +'</button>';
+        });
+
+        $('#color .field').html(colorTmpl);
+        $('#version .field').html(versionTmpl);
+        $('#size .field').html(sizeTmpl);
+
+        //
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .field {margin-bottom: 10px;}
+        .prop {background-color: #eee;}
+        .prop.on {background-color: #fc0;}
+    </style>
+    <script src="lib/zepto/1.1.6/zepto.js"></script>
+</head>
+<body>
+    <div class="sku">
+        <div id="color" class="color">
+            <label>颜色：</label>
+            <div class="field"></div>
+        </div>
+
+        <div id="version" class="version">
+            <label>版本：</label>
+            <div class="field"></div>
+        </div>
+
+        <div id="size" class="size">
+            <label>容量：</label>
+            <div class="field"></div>
+        </div>
+    </div>
+
+
+    <script>
+        // var skudata = {
+        //     defSku: [],
+        //     skulist: {
+        //     }
+        // };
+
+        var skulist = {
+                '11:21:33': {
+                    skuid: 123123,
+                    name: '纯白,联通版,64G',
+                    price: 799.00,
+                    stock: 99,
+                    insurance: '意外保59元'
+                },
+                '11:21:32': {
+                    skuid: 123123,
+                    name: '纯白,联通版,32G',
+                    price: 599.00,
+                    stock: 99,
+                    insurance: '意外保59元'
+                },
+                '11:22:32': {
+                    skuid: 123123,
+                    name: '纯白,移动版,32G',
+                    price: 599.00,
+                    stock: 99,
+                    insurance: '意外保59元'
+                },
+                '12:22:32': {
+                    skuid: 123123,
+                    name: '灰色,移动版,32G',
+                    price: 599.00,
+                    stock: 99,
+                    insurance: '意外保59元'
+                },
+                '13:23:31': {
+                    skuid: 123123,
+                    name: '粉色,移动公开版,16G',
+                    price: 599.00,
+                    stock: 99,
+                    insurance: '意外保59元'
+                }
+            };
+
+        function getUrlQuery(name) {
+            var urlQuery = window.location.search;
+            // 去掉打头的?
+            urlQuery = urlQuery.slice(1);
+
+            var queryArr = urlQuery.split('&'),
+                result;
+
+            $.each(queryArr, function (i, item) {
+                var arr = item.split('=');
+
+                if (arr[0] === name) {
+                    result = arr[1];
+                    return;
+                }
+            });
+
+            return result;
+        }
+
+
+        // 取该商品sku属性集
+        // 由于目前sku属性值不唯一，这里加了sku属性在skulist中的记录索引来识别
+        // sku属性排列=color:version:size
+
+        function getPropSet(skudata) {
+
+            var skuSet = [{},{},{}]; // sku属性集
+
+            $.each(skudata, function (k, v) {
+                var propVal = k.split(':');
+
+                // sku属性排列=color:version:size
+                var color = skuSet[0],
+                    colorVal = propVal[0];
+
+                var version = skuSet[1],
+                    versionVal = propVal[1];
+
+                var size = skuSet[2],
+                    sizeVal = propVal[2];
+
+                if (!color[colorVal]) {
+                    color[colorVal] = v.name.split(',')[0];
+                }
+                if (!version[versionVal]) {
+                    version[versionVal] = v.name.split(',')[1];
+                }
+                if (!size[sizeVal]) {
+                    size[sizeVal] = v.name.split(',')[2];
+                }
+            });
+
+            return skuSet;
+        }
+
+        function renderPropSet(propSet, skuNamed) {
+            // 按属性渲染HTML结构
+            var defsku;
+            if (skuNamed !== undefined) {
+                defsku = skuNamed.split(':');
+            }
+
+            var colorTmpl = '';
+            $.each(propSet[0], function (k, v) {
+                var addclass = defsku[0] === k ? ' on' : '';
+                colorTmpl += '<button class="prop'+ addclass +'" data-index="0" data-value="'+ k +'">'+ v +'</button>';
+            });
+
+            var versionTmpl = '';
+            $.each(propSet[1], function (k, v) {
+                var addclass = defsku[1] === k ? ' on' : '';
+                versionTmpl += '<button class="prop'+ addclass +'" data-index="1" data-value="'+ k +'">'+ v +'</button>';
+            });
+
+            var sizeTmpl = '';
+            $.each(propSet[2], function (k, v) {
+                var addclass = defsku[2] === k ? ' on' : '';
+                sizeTmpl += '<button class="prop'+ addclass +'" data-index="2" data-value="'+ k +'">'+ v +'</button>';
+            });
+
+            $('#color .field').html(colorTmpl);
+            $('#version .field').html(versionTmpl);
+            $('#size .field').html(sizeTmpl); 
+        }
+
+
+        function initSkuSet(skuNamed) {
+            var propSet = getPropSet(skulist);
+
+            renderPropSet(propSet, skuNamed);
+
+            // 初始有指定sku信息，选中对应的属性
+            if (skuNamed !== undefined) {
+                //
+            }
+
+            console.log('skuSet', propSet);
+        }
+
+        $(function () {
+
+            // 获取指定的sku信息
+            var skuNamed = getUrlQuery('sku_info');
+
+            console.log('初始指定的sku：', skuNamed);
+
+            initSkuSet(skuNamed);
+
+            // 指定商品sku的详情页url: ../detail.html?sku_info=12:22:31
+
+            var skuMap = []; // 选中的属性对应的sku组合属性集
+
+            var propArr = [];
+            
+            $('.sku').on('click', '.prop', function () {
+                var propval = $(this).data('value');
+                var propindex = $(this).data('index');
+
+                console.log('prop value', propval);
+                
+                propArr[propindex] = propval;
+                // propArr.splice(propindex + 1);
+
+                console.log('propArr', propArr);
+
+                // 取含propArr的所有组合
+                // $.each(skulist, function (k, v) {
+                //     var skuVal = k.split(':');
+                //     propArr[propindex] = propval;
+
+                //     if (skuVal[propindex] == propval) {
+                //         // skuMap.push(v.name.split(',')[propindex]);
+                //         // console.log('skuMap', skuMap);
+                //         skuMap.push(v.name);
+                //     }
+                // });
+
+                // console.log('skuMap', skuMap);
+
+            });
+        });
+    </script>
+
+</body>
+</html>

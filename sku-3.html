@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="format-detection" content="telephone=no,email=no"/>
+
+    <style>
+        html * {
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+        .row {
+            margin: 20px 0;
+            overflow: auto;
+        }
+        .row label {
+            float: left;
+            width: 60px;
+        }
+
+        .prop {
+            display: inline-block;
+            padding: 5px;
+            cursor: pointer;
+            background-color: #eee;
+        }
+        .prop.on {background-color: #fc0;}
+        .prop.disabled {
+            color: #ccc;
+            background-color: #eee;
+        }
+    </style>
+    <script src="lib/zepto/1.1.6/zepto.js"></script>
+</head>
+<body>
+    <div id="sku-box" class="sku sku-props">
+        <div class="row row-prop">
+            <label>颜色：</label>
+            <div class="field">
+                <span class="prop" data-index="0" data-flag="3">银</span>
+                <span class="prop" data-index="0" data-flag="11">白</span>
+                <span class="prop" data-index="0" data-flag="8">蓝</span>
+                <span class="prop" data-index="0" data-flag="9">粉</span>
+            </div>
+        </div>
+
+        <div class="row row-prop">
+            <label>版本：</label>
+            <div class="field">
+                <span class="prop" data-index="1" data-flag="1">移动版</span>
+                <span class="prop" data-index="1" data-flag="21">联通版</span>
+                <span class="prop" data-index="1" data-flag="5">电信版</span>
+                <span class="prop" data-index="1" data-flag="6">公开版</span>
+            </div>
+        </div>
+
+        <div class="row row-prop">
+            <label>容量：</label>
+            <div class="field">
+                <span class="prop" data-index="2" data-flag="5">16G</span>
+                <span class="prop" data-index="2" data-flag="32">32G</span>
+                <span class="prop" data-index="2" data-flag="33">64G</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var skulist = {
+            "11:21:33": {
+                "skuid": 123123,
+                "name": "纯白,联通版,64G",
+                "price": 799.00,
+                "stock": 99,
+                "insurance": "意外保59元"
+            },
+            "11:21:32": {
+                "skuid": 123123,
+                "name": "纯白,联通版,32G",
+                "default": true,
+                "price": 599.00,
+                "stock": 99,
+                "insurance": "意外保59元"
+            },
+            "11:22:32": {
+                "skuid": 123123,
+                "name": "纯白,移动版,32G",
+                "price": 599.00,
+                "stock": 99,
+                "insurance": "意外保59元"
+            },
+            "12:22:32": {
+                "skuid": 123123,
+                "name": "灰色,移动版,32G",
+                "price": 599.00,
+                "stock": 99,
+                "insurance": "意外保59元"
+            },
+            "13:23:31": {
+                "skuid": 123123,
+                "name": "粉色,移动公开版,16G",
+                "price": 599.00,
+                "stock": 99,
+                "insurance": "意外保59元"
+            }
+        };
+
+        Object.prototype.getkey = function (index) {
+            var i = 0;
+            var o = {};
+            for (var k in this) {
+                if (index === i && this.hasOwnProperty(k)) return k;
+            }
+        };
+
+        Object.prototype.getKeys = function () {
+            if (typeof this !== 'object') return;
+            var obj = this;
+            var keys = [];
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    keys[keys.length] = key;
+                }
+            }
+            return keys;
+        };
+
+        function getUrlQuery(name) {
+            var urlQuery = window.location.search;
+            // 去掉打头的?
+            urlQuery = urlQuery.slice(1);
+
+            var queryArr = urlQuery.split('&'),
+                result;
+
+            $.each(queryArr, function (i, item) {
+                var arr = item.split('=');
+
+                if (arr[0] === name) {
+                    result = arr[1];
+                    return;
+                }
+            });
+            return result;
+        }
+
+        function getDefaultSkuKey(skulist) {
+            for (var key in skulist) {
+                var sku = skulist[key];
+                if (sku["default"]) {
+                    return key;
+                }
+            }
+        }
+        
+        function getFirstOnSell(skulist) {
+            for (var key in skulist) {
+                var sku = skulist[key];
+                if (sku["stock"] > 0) {
+                    return key;
+                }
+            }
+        }
+
+        // 取skulist中含已选定属性值的sku
+        function getSkuKeyCombo(skulist, propChecked) {
+            var propArr;
+            var comboKeys = [];
+
+            $.each(skulist, function (key, sku) {
+
+                propArr = key.split(':');
+
+                $.each(propChecked, function (i, item) {
+                    if ($.inArray(item, propArr) >= 0) {
+                        if (sku.stock > 0) {
+                            //
+                        }
+                        comboKeys.push(sku);
+                    }
+                });
+            });
+        }
+
+        function renderSkuChecked(skulist, skukey) {
+            if (!skukey) return;
+        }
+
+        function initSku(skulist, sku) {
+            var skuinfo = skulist[sku];
+            var propflag = sku.split(':');
+
+            var $propRows = $('#sku-box').find('.row-prop');
+
+            $propRows.each(function (i, elem) {
+                var $field = $(elem);
+                $field.find('[data-flag="'+ propflag[i] +'"]').addClass('on');
+            });
+
+            renderSkuChecked(skulist, sku);
+        }
+
+        $(function () {
+            // 获取指定的sku信息
+            // 指定sku示例url: ../detail.html?sku_info=12:22:31
+            var skuChecked = getUrlQuery('sku_info');
+
+            // 初始有指定sku信息，选中对应的属性
+            // 没有指定，则选中默认sku，否则取第一个有库存的
+            if (skuChecked === undefined) {
+                skuChecked = getDefaultSkuKey(skulist) || skulist.getFirstOnSell();
+            }
+
+            var $skubox = $('#sku-box');
+            var $props = $skubox.find('.prop');
+
+            var propChecked = skuChecked.split(':'); // 已选中的属性值
+            var propCombo = [];
+            var skuMap = []; // 选中的属性对应的sku组合属性集
+
+            console.log('初始指定的sku：', skuChecked);
+            initSku(skulist, skuChecked);
+            
+            $skubox.on('click', '.prop', function () {
+                var $this = $(this);
+
+                // 目前商品无SPU默认主图，只有SKU图，因此暂设置不可取消选中
+                if ($this.hasClass('on')) return;
+
+                var propflag = $this.data('flag');
+                var filedindex = $this.data('index');
+
+                $this.addClass('on').siblings('.prop').removeClass('on');
+                propChecked[filedindex] = propflag;
+
+                console.log('已选中属性', filedindex,propChecked);
+
+                // 查询含propArr的所有组合
+                // propCombo = getPropCombo(skulist, propChecked);
+            });
+        });
+
+    </script>
+</body>
+</html>
